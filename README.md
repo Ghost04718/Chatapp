@@ -1,6 +1,6 @@
 # Real-time Chat Application
 
-This is a real-time chat application built with Next.js, Socket.IO, and TypeScript.
+This is a real-time chat application built with Flask and SQL.
 
 ## Features
 
@@ -17,16 +17,12 @@ This is a real-time chat application built with Next.js, Socket.IO, and TypeScri
 ## Getting Started
 
 1. Clone the repository
-2. Install dependencies: `npm install`
-3. Run the development server: `npm run dev`
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+2. Install dependencies: `pip install -r requirements.txt`
+3. Run the Flask app: `python app.py`
+4. Open [http://localhost:5000](http://localhost:5000) in your browser
 
 ## Technologies Used
 
-- Next.js
-- Socket.IO
-- TypeScript
-- Tailwind CSS
 - Flask (for backend)
 - SQLAlchemy (for database management)
 
@@ -42,4 +38,3 @@ This is a real-time chat application built with Next.js, Socket.IO, and TypeScri
 - Added user authentication system
 - Implemented home page with direct access to chat rooms
 - Added functionality to create and join chat rooms
-- Fixed TypeScript errors in the frontend code
