@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Chat Room</h1>
+<div class="chat-container">
+    <div class="chat-box">
+        {% for message in messages %}
+            <div class="message">
+                <strong>{{ message.user.username }}:</strong> {{ message.content }}
+            </div>
+        {% endfor %}
+    </div>
+    <form action="{{ url_for('send_message') }}" method="POST" class="message-form">
+        <textarea name="content" rows="3" placeholder="Type your message here..."></textarea>
+        <button type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+    </form>
+</div>
+{% endblock %}
