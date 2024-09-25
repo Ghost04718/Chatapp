@@ -5,18 +5,27 @@
 {% block content %}
 <div class="bg-white p-6 rounded-lg shadow-lg">
     <h2 class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">{{ room.name }}</h2>
+    <p>
+        {% if room.is_public %}
+            This is a public room.
+        {% else %}
+            This is a private room.
+        {% endif %}
+    </p>
     <div id="chat-messages" class="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg mb-6 h-96 overflow-y-auto shadow-inner">
         {% for message in messages %}
         <div class="mb-4 p-3 rounded-lg {% if message.user.id == current_user.id %}bg-blue-100 ml-8{% else %}bg-purple-100 mr-8{% endif %} shadow">
             <div class="font-bold text-blue-600">{{ message.user.username }}</div>
             <div class="text-gray-700">{{ message.content }}</div>
-            <div class="text-xs text-gray-500 text-right">{{ message.timestamp.strftime('%H:%M') }}</div>
         </div>
         {% endfor %}
     </div>
-    <form action="{{ url_for('send_message', room_id=room.id) }}" method="post" class="flex">
+    <form action="{{ url_for('send_message', room_id=room.id) }}" method="post" class="flex mb-4">
         <input type="text" name="content" required placeholder="Type your message..." class="flex-grow border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300">
         <button type="submit" class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-2 px-6 rounded-r-lg transition duration-300 transform hover:scale-105">Send</button>
+    </form>
+    <form action="{{ url_for('quit_room', room_id=room.id) }}" method="post">
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105">Quit Room</button>
     </form>
 </div>
 {% endblock %}

@@ -10,6 +10,11 @@
         <a href="{{ url_for('room_chat', room_id=room.id) }}" class="block bg-gradient-to-r from-blue-100 to-purple-100 hover:from-blue-200 hover:to-purple-200 p-4 rounded-lg shadow transition duration-300 transform hover:scale-105">
             <h3 class="text-lg font-semibold text-blue-600">{{ room.name }}</h3>
             <p class="text-sm text-gray-600">{{ room.users|length }} members</p>
+            {% if room.is_public %}
+                (Public)
+            {% else %}
+                (Private)
+            {% endif %}
         </a>
         {% endfor %}
     </div>
