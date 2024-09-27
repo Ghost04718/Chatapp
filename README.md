@@ -1,40 +1,65 @@
 # Real-time Chat Application
 
-This is a real-time chat application built with Flask and SQL.
+This is a real-time chat application built with Flask and SQLAlchemy.
 
 ## Features
 
-- Real-time messaging
-- Multiple chat rooms:
-  - Public chat room
-  - Private one-to-one chat rooms
-  - Group chat rooms
-- Create new chat rooms
-- Join existing chat rooms
-- User authentication
-- Home page with direct access to chat rooms and room creation/joining
+- User authentication (registration and login)
+- Create and join chat rooms
+- Public and private chat rooms
+- Real-time messaging within chat rooms
+- Chatbot integration using API
+- Interactive graph visualization of user-room relationships
 
-## Getting Started
+## Installation
 
-1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the Flask app: `python app.py`
-4. Open [http://localhost:5000](http://localhost:5000) in your browser
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/flask-chat-app.git
+   cd flask-chat-app
+   ```
+
+2. Install the required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Set up environment variables for AI API
+
+## Usage
+
+1. Run the Flask application:
+   ```bash
+   python app.py
+   ```
+
+2. Open your web browser and navigate to `http://localhost:5000`
+
+3. Register a new account or log in
+
+4. Start chatting in existing rooms or create your own!
+
+## Project Structure
+
+- `app.py`: Main Flask application file
+- `templates/`: Directory containing HTML templates
+- `static/`: Directory for static files (CSS, JavaScript)
 
 ## Technologies Used
 
-- Flask (for backend)
-- SQLAlchemy (for database management)
+- Flask: Web framework
+- SQLAlchemy: Database ORM
+- Flask-Login: User session management
+- AI API: Chatbot integration
+- D3.js: Graph visualization
 
 ## Future Improvements
 
-- Implement persistent storage for chat history
-- Add file sharing capabilities
-- Improve UI/UX design
+- Implement WebSocket for real-time updates
 - Add user profiles and avatars
+- Enhance chatbot capabilities
+- Improve UI/UX design
 
-## Recent Changes
+## Contributing
 
-- Added user authentication system
-- Implemented home page with direct access to chat rooms
-- Added functionality to create and join chat rooms
+Contributions are welcome! Please feel free to submit a Pull Request.
