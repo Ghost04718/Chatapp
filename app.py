@@ -6,6 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
@@ -64,8 +65,16 @@ class LoginForm(FlaskForm):
 
 # Initialize the database
 with app.app_context():
-    db.drop_all()  # This will drop all existing tables
-    db.create_all()  # This will create all tables based on your current models
+    try:
+        db.drop_all()  # Comment out this line in production
+        db.create_all()
+        hashed_password = generate_password_hash('your_secret_key')
+        new_user = User(username='Chatbot', password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        print("Database initialized successfully.")
+    except Exception as e:
+        print(f"Error initializing database: {str(e)}")
 
 # Home route
 @app.route('/')
@@ -137,9 +146,17 @@ def logout():
 def send_message(room_id):
     content = request.form.get('content')
     if content:
-        new_message = Message(user_id=current_user.id, room_id=room_id, content=content)
-        db.session.add(new_message)
+        new_message_user = Message(user_id=current_user.id, room_id=room_id, content=content)
+        db.session.add(new_message_user)
         db.session.commit()
+        if content.startswith('@Chatbot'):
+            messages = Message.query.filter_by(room_id=room_id).order_by(Message.id.asc()).all()
+            messages_string = " ".join([message.content for message in messages])
+            prompt = content.replace('@Chatbot', '', 1).strip()
+            reponse = get_chatbot_response(messages_string, prompt)  # Get response from chatbot
+            new_message_chatbot = Message(user_id=1, room_id=room_id, content=reponse)
+            db.session.add(new_message_chatbot)
+            db.session.commit()
     return redirect(url_for('room_chat', room_id=room_id))
 
 # Route to get started with chat rooms
@@ -161,7 +178,7 @@ def room_chat(room_id):
         db.session.commit()
     
     messages = Message.query.filter_by(room_id=room_id).order_by(Message.id.asc()).all()  # Order messages
-    return render_template('room_chat.html', room=room, messages=messages)
+    return render_template('room_chat.html', room=room, messages=messages, current_user=current_user)
 
 # Route to create a room
 @app.route('/create_room', methods=['GET', 'POST'])
@@ -233,32 +250,39 @@ def graph_data():
     # Fetch the chatrooms the current user is a part of
     user_chatrooms = Room.query.filter(Room.users.any(id=current_user_id)).all()
     
-    # Get all users and chatrooms that the current user can see
+    # Initialize nodes and links
     nodes = []
     links = []
     
-    # Maintain sets of added user and chatroom IDs to avoid duplicates
-    added_users_nodes = set()
-    added_rooms_nodes = set()
+    added_users_nodes = {}
+    added_rooms_nodes = {}
 
     # Add the current user as a node
-    if current_user_id not in added_users_nodes:
-        nodes.append({"id": f"user_{current_user.id}", "name": current_user.username, "group": "user"})
-        added_users_nodes.add(current_user_id)
+    nodes.append({"id": f"user_{current_user.id}", "name": current_user.username, "group": "current_user", "size": 10})  # Example size
+    added_users_nodes[current_user_id] = 1  # Track appearance count
 
     for chatroom in user_chatrooms:
-        # Add chatroom node if not already added
-        if chatroom.id not in added_rooms_nodes:
-            nodes.append({"id": f"room_{chatroom.id}", "name": chatroom.name, "group": "chatroom"})
-            added_rooms_nodes.add(chatroom.id)
+        # Add chatroom node
+        nodes.append({"id": f"room_{chatroom.id}", "name": chatroom.name, "group": "chatroom", "size": 10})  # Default size
+        added_rooms_nodes[chatroom.id] = True  # Mark as added
         
         # Add users in the chatroom as nodes and links
         for user in chatroom.users:
+            # Track user appearance count
             if user.id not in added_users_nodes:
-                nodes.append({"id": f"user_{user.id}", "name": user.username, "group": "user"})
-                added_users_nodes.add(user.id)
+                added_users_nodes[user.id] = 1  # Initialize count
+                nodes.append({"id": f"user_{user.id}", "name": user.username, "group": "user", "size": 10})  # Default size
+            else:
+                added_users_nodes[user.id] += 1  # Increment count
+            
             # Create link between user and chatroom
             links.append({"source": f"user_{user.id}", "target": f"room_{chatroom.id}"})
+
+    # Update sizes based on appearance count
+    for user_id, count in added_users_nodes.items():
+        for node in nodes:
+            if node['id'] == f"user_{user_id}":
+                node['size'] += count * 2
 
     # Constructing the graph data
     graph_data = {
@@ -267,6 +291,7 @@ def graph_data():
     }
 
     return jsonify(graph_data)  # Ensure to return JSON data
+
 
 
 @app.route('/graph')

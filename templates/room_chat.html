@@ -7,9 +7,9 @@
     <h2 class="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">{{ room.name }}</h2>
     <p>
         {% if room.is_public %}
-            This is a public room.
+        <div class="text-lg font-semibold text-blue-600">This is a public room.</div>
         {% else %}
-            This is a private room.
+        <div class="text-lg font-semibold text-blue-600">This is a private room.</div>
         {% endif %}
     </p>
     <div id="chat-messages" class="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg mb-6 h-96 overflow-y-auto shadow-inner">
@@ -28,4 +28,15 @@
         <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 transform hover:scale-105">Quit Room</button>
     </form>
 </div>
+
+<script>
+    // Function to scroll to the bottom of the chat messages
+    function scrollToBottom() {
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Call the function when the window loads
+    window.onload = scrollToBottom;
+</script>
 {% endblock %}
