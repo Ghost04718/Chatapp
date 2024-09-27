@@ -53,8 +53,11 @@
                 .selectAll('circle')
                 .data(data.nodes)
                 .enter().append('circle')
-                .attr('r', 10)
-                .attr('fill', d => d.group === 'user' ? '#3b82f6' : '#8b5cf6')
+                .attr('r', d => d.size ? d.size : 10) 
+                .attr('fill', d => {
+                    if (d.group === 'current_user') return '#8b5cf6';  // Color for the current user
+                    return d.group === 'user' ? '#3b82f6' : '#e870fa';  // Colors for other groups
+                })
                 .on('mouseover', handleMouseOver)  // Add hover effects
                 .on('mouseout', handleMouseOut)
                 .call(drag(simulation));
