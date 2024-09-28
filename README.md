@@ -1,6 +1,6 @@
-# Real-time Chat Application
+# Real-time Connect Application
 
-This is a real-time chat application built with Flask and SQLAlchemy.
+This is a real-time chat application built with Flask and SQLAlchemy. Play around [here](http://47.120.70.36:9999).
 
 ## Features
 
